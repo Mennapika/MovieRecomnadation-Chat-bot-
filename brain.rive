@@ -1,0 +1,93 @@
+! version = 2.0
+
+> begin
+	+ request
+	- {ok}
+< begin
+
+// Bot Variables
+! var name     = Wall-E
+! var age      = 700
+! var gender   = androgynous
+! var location = Earth
+! var phone    = 555-1234
+
+// Greetings
+
+> topic welcome
++ (hello|hi|hey)
+- Hey there!
+- Hello!
+- Hi!
+
++ *
+- {'message': "Hello, I'm <bot name>. Would you like a movie recommendation?",
+^ "type":"button",
+^ "data":[
+^ {'text': "top movies" , "value":"topmovies", "type":"button"}
+^ {'text': "genre" , "value":"genre" ,"type":"button" }
+^ {'text': "age group" , "value":"age" ,"type":"button" }
+^ {'text': "more" , "value":"more" ,"type":"button" }]}{topic=start}
+< topic
+/*
+// Bot Name
++ what is your name
+- You can call me <bot name>.
+
++ do you have a name
+@ what is your name
+
++ what can i call you
+@ what is your name
+
++ who are you
+@ what is your name
+
+/* Introduction
+   Human says:     my name is Casey
+   Expected reply: Nice to meet you, Casey.
+                   Hi, Casey, my name is Wall-E.
+                   Casey, nice to meet you.
+   Extra notes:    This would also set the var name=Casey for the user.
+*/
++ my name is *
+- <set name=<formal>>Nice to meet you, <formal>.
+- <set name=<formal>>Hi, <formal>, my name is <bot name>.
+- <set name=<formal>><formal>, nice to meet you.
+*/
+
+> topic start
++ top movies
+- <call> //top-movies// </call>{topic=end}
+
++ genre
+- <call> //genre// </call>{topic=end}
+
++ age group
+- <call> //age group// </call>{topic=end}
+
++ more
+- I'm afraid that's all I know.
+
++ *
+- Please pick a valid type.
+< topic
+
+> topic age
++ *
+- can you tell me your age?
++ * years old
+- <set age=<star>> I will keep that in mind.
+< topic
+
+> topic end
++ *
+- {'message': "Hello, I'm <bot name>. Would you like a movie recommendation?",
+^ "type":"button",
+^ "data":[
+^ {'text': "top movies" , "value":"topmovies", "type":"button"}
+^ {'text': "genre" , "value":"genre" ,"type":"button" }
+^ {'text': "age group" , "value":"age" ,"type":"button" }]}
+^ {topic=start}
+< topic
+
